@@ -1,0 +1,27 @@
+#! /bin/bash
+
+set -euo pipefail
+
+PROXY_CERTS=/etc/proxy/certs
+PROXY_TEMPLATES=/etc/proxy/templates
+
+# Create proxy certs directory if it does not exist.
+if [ ! -d "$PROXY_CERTS" ]; then
+  mkdir -p "$PROXY_CERTS"
+fi
+
+# Create proxy templates directory if it does not exist.
+if [ ! -d "$PROXY_TEMPLATES" ]; then
+  mkdir -p "$PROXY_TEMPLATES"
+fi
+
+# Copy nginx template file to $PROXY_TEMPLATES
+cp ./templates/nginx-compose-v2.tmpl "$PROXY_TEMPLATES"
+
+# Create nginx volumes.
+docker volume create nginx-conf
+docker volume create nginx-host
+docker volume create nginx-html
+
+# Start all necessary containers.
+docker-compose up -d
